@@ -17,6 +17,7 @@ This is a Laravel project that allows you to manage companies and employees.
     npm install && npm run dev
     
 3. Generate the Application Key:
+    php artisan key:generate
     
 4.Configure the Environment:
     Rename the .env.example file to .env.
