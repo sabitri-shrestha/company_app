@@ -18,17 +18,17 @@ This is a Laravel project that allows you to manage companies and employees.
     
 3. Generate the Application Key:
     
-3.Configure the Environment:
+4.Configure the Environment:
     Rename the .env.example file to .env.
     Update the database configuration in the .env file to match your MySQL settings.
     
-4.Generate the Application Key:
+5.Generate the Application Key:
     php artisan key:generate
     
-5.Run the Database Migrations and Seeders:
+6.Run the Database Migrations and Seeders:
     php artisan migrate --seed
     
-6.Serve the Application:
+7.Serve the Application:
     php artisan serve
 
     
