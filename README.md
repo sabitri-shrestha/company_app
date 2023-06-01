@@ -24,7 +24,7 @@ This is a Laravel project that allows you to manage companies and employees.
    ```
     
 4.Configure the Environment:
-- Rename the .env.example file to .env.```
+- Rename the .env.example file to .env.
 - Update the database configuration in the .env file to match your MySQL settings.
 
     
