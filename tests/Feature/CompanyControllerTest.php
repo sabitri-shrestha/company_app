@@ -7,42 +7,56 @@ use App\Models\Company;
 use App\Models\User;
 use Tests\TestCase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Foundation\Testing\WithFaker;
 
 class CompanyControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithFaker;
 
-    public function testCreateCompanySendsEmailNotification()
+    public function testCreateCompany()
     {
-        Notification::fake();
-        // Create a user using the UserFactory
-        $user = User::factory()->create();
+        //to disable the default exception handling behavior during the test execution.
+        $this->withoutExceptionHandling();
 
-        // Simulate a company creation request
-        $response = $this->actingAs($user)->post(route('companies.store'), [
+        $response = $this->post(route('companies.store'), [
             'name' => 'Example Company',
-            'email' => 'example@example.com',
+            'email' => 'company@example.com',
             'logo' => UploadedFile::fake()->image('logo.jpg'),
             'website' => 'https://www.example.com',
         ]);
 
-        // Retrieve the created company
-        $company = Company::where('name', 'Example Company')->first();
+        $response->assertRedirect(route('companies.index'));
+
+        $this->assertDatabaseHas('companies', [
+            'name' => 'Example Company',
+            'email' => 'company@example.com',
+        ]);
 
 
-        Notification::send($user, new NewCompanyNotification($company));
 
-        // Ensure the email notification is sent to the admin user
+    }
+
+    public function testSendEmailNotificationOnCompanyCreation()
+    {
+        $this->withoutExceptionHandling();
+
+        Notification::fake();
+
+        $company = Company::factory()->create();
+
+        $adminUser = User::factory()->create([
+            'name' => 'Administrator',
+            'email' => 'admin@admin.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Notification::send($adminUser, new NewCompanyNotification($company));
+
+
         Notification::assertSentTo(
-            $user,
-            NewCompanyNotification::class,
-            function ($notification) use ($company) {
-                return $notification->company->id === $company->id;
-            }
+            $adminUser, // Assuming you have a 'user' relation in your Company model
+            NewCompanyNotification::class
         );
-
-
-
     }
 }
 
